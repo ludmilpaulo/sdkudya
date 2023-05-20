@@ -1,12 +1,9 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../redux/slices/authSlice";
-import {
-  selectTotalItems,
-  selectTotalPrice,
-} from "../redux/slices/basketSlice";
+import { HeroIconOutline } from 'react-native-heroicons/outline';
 
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Linking } from "react-native";
 
 import tailwind from "tailwind-react-native-classnames";
 
@@ -29,10 +26,17 @@ const OrderHistory = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const navigation = useNavigation();
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([{}]);
 
-  const orderHistory = async () => {
-    
+  const pressCall=(phone:number)=>{
+    console.log("Pressed item with ID:", phone);
+    const curl='tel://';
+    const call = `${curl}${phone}`;
+    Linking.openURL(call)
+  }
+
+
+  const getOrderHistory = async () => {
 
     let response = await fetch(
       "https://www.sunshinedeliver.com/api/customer/order/history/",
@@ -43,25 +47,23 @@ const OrderHistory = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          access_token:  user?.token,
+          access_token: user?.token,
         }),
       }
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        setData(responseJson?.order_history);
-        console.log("dta==>", responseJson.order_history);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    );
+    const responseJson = await response.json();
+    setData(responseJson?.order_history);
+    
+
   };
+
 
   useEffect(() => {
     console.log("dta==>", data);
-    orderHistory();
+    getOrderHistory();
   }, []);
 
+ 
   return (
     <>
       <Screen style={tailwind``}>
@@ -69,7 +71,7 @@ const OrderHistory = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <XCircleIcon color="#004AAD" size={30} />
         </TouchableOpacity>
-        <Text style={tailwind`font-light text-lg`}>Delivery</Text>
+        <Text style={tailwind`font-light text-lg`}>Minha Entregas</Text>
       </View>
       {data.map((order) => (  
       <View style={tailwind`bg-white mx-5 my-2 rounded-md p-6 z-50 shadow-md`}>
@@ -78,12 +80,14 @@ const OrderHistory = () => {
           <View>
          
             <Text style={tailwind`text-lg text-gray-400`}>
-             Restaurant {order?.restaurant?.name}
+             Restaurant : {order?.restaurant?.name}
             </Text>
-         
+            <TouchableOpacity  onPress={()=> pressCall(order?.restaurant?.phone)}>
             <Text> Telefone 
               {order?.restaurant?.phone} 
             </Text>
+            <HeroIconOutline name="chat" size={24} color="black" />
+            </TouchableOpacity>
            
               <View style={tailwind`text-4xl font-bold`}>
               {order?.order_details.map(
@@ -164,10 +168,11 @@ const OrderHistory = () => {
                                 {detais.meal.price} Kz
                               </Text>
                             </Text>
+                          
                             <Text>
-                              Quantidade:{" "}
+                            {"\n"} Quantidade:{" "}
                               <Text style={tailwind`text-gray-800`}>
-                                {detais?.quantity}
+                             {detais?.quantity}
                               </Text>
                             </Text>
                           </View>

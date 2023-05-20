@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Screen from "../components/Screen";
 import tailwind from "tailwind-react-native-classnames";
-import { XCircleIcon } from "react-native-heroicons/outline";
+import { XCircleIcon, HeroIconOutline } from "react-native-heroicons/outline";
 import * as Progress from "react-native-progress";
 import { useSelector } from "react-redux";
 import MapView, {
@@ -101,7 +101,7 @@ const Delivery = () => {
   useEffect(() => {
     if (locationObject) {
       console.debug(locationObject);
-      ref.current?.animateCamera({ center: locationObject, zoom: 1 });
+      ref.current?.animateCamera({ center: locationObject, zoom: 15 });
     }
   }, [locationObject]);
 
