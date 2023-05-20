@@ -181,7 +181,7 @@ const Delivery = () => {
             <Text></Text>
 
             <Text style={tailwind`text-4xl font-bold`}>
-              Travel time: {time}
+            Tempo estimado:{time} Minutos
             </Text>
           </View>
           <Image
