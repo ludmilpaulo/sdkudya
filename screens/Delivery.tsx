@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Screen from "../components/Screen";
 import tailwind from "tailwind-react-native-classnames";
-import { XCircleIcon, HeroIconOutline } from "react-native-heroicons/outline";
+import { XCircleIcon } from "react-native-heroicons/outline";
 import * as Progress from "react-native-progress";
 import { useSelector } from "react-redux";
 import MapView, {
@@ -49,7 +49,7 @@ const Delivery = () => {
   const [driverLatitude, setDriverLat] = useState(0);
 
 
-  const [data, setData] = useState([{}]);
+  const [data, setData] = useState();
   const [driverData, setDriverData] = useState({});
   const [restaurantData, setRestaurantData] = useState([]);
   const [orderData, setOrderData] = useState([]);
@@ -74,19 +74,11 @@ const Delivery = () => {
     longitudeDelta: 0.005,
   };
 
+  
  
 
-
-  
-  const [travelTime, setTravelTime] = useState<number | null>(null);
-
-
-  
-
-  
-
   useEffect(() => {
-
+ 
     
     
     pickOrder();
@@ -125,7 +117,7 @@ const Delivery = () => {
           alert(" Voce Nao tem nenhum Pedido a Caminho");
           navigation.goBack();
         } else {
-          setData(responseJson.order);
+          setData(responseJson);
           setDriverData(responseJson.order.driver);
           setRestaurantData(responseJson.order.restaurant);
           setOrderData(responseJson.order.order_details);
@@ -136,42 +128,46 @@ const Delivery = () => {
       });
   };
 
-  /*
+
 
   const calculateTravelTime = async () => {
     const apiKey = googleAPi;
-    const originLat = driver ? driver?.latitude : 0;
-    const originLng = driver ? driver?.longitude : 0;
-    console.log("user location", initialRegion);
-    console.log("driver location", initialCoordinate);
-    const destinationLat = userlatitude;
-    const destinationLng = userlongitude;
+    const originLat = locationObject?.latitude
+    const originLng = locationObject?.longitude
+   
+    const destinationLat = initialRegion?.latitude;
+    const destinationLng = initialRegion?.longitude;
     const mode = "driving";
     const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originLat},${originLng}&destination=${destinationLat},${destinationLng}&mode=${mode}&key=${apiKey}`;
 
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        const travelTimeInSeconds = data.routes[0].legs[0].duration.value;
+        const travelTimeInSeconds = data.routes[0]?.legs[0].duration.value;
         const travelTimeInMinutes = Math.ceil(travelTimeInSeconds / 60);
+        if (travelTimeInSeconds !== undefined) {
         setTime(travelTimeInSeconds.toFixed(2));
         console.log(`Travel time: ${travelTimeInMinutes} minutes`);
+        }else{
+          setTime(travelTimeInSeconds.toFixed(2));
+        }
       })
-      .catch((error) => console.error("No route information available."));
+      .catch((error) => console.error("No route information available.", error));
   };
 
   useEffect(() => {
+    console.log("my driver", data)
     const timer = setInterval(() => calculateTravelTime(), 2000);
     return () => clearInterval(timer);
   }, []);
-*/
+
   return (
     <Screen style={tailwind`flex-1`}>
       <View style={tailwind`flex-row justify-between items-center p-5`}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <XCircleIcon color="#004AAD" size={30} />
         </TouchableOpacity>
-        <Text style={tailwind`font-light text-lg`}>Delivery</Text>
+        <Text style={tailwind`font-light text-lg`}>Minhas Entregas</Text>
       </View>
 
       <View style={tailwind`bg-white mx-5 my-2 rounded-md p-6 z-50 shadow-md`}>

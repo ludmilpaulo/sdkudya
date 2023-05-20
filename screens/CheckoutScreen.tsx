@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCartItems, updateBusket } from "../redux/slices/basketSlice";
 
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { googleAPi } from "../configs/variable";
 
 import Screen from "../components/Screen";
 import { selectUser } from "../redux/slices/authSlice";
@@ -173,7 +174,7 @@ const CheckoutScreen = ({ navigation }: { navigation: any }) => {
             setUserAddress(data?.description);
           }}
           query={{
-            key: "AIzaSyDn1X_BlFj-57ydasP6uZK_X_WTERNJb78",
+            key: googleAPi,
             language: "en",
 
             types: ["(cities)"],

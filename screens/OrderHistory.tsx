@@ -1,7 +1,10 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../redux/slices/authSlice";
-import { HeroIconOutline } from 'react-native-heroicons/outline';
+import {
+  selectTotalItems,
+  selectTotalPrice,
+} from "../redux/slices/basketSlice";
 
 import { View, Text, Image, TouchableOpacity, Linking } from "react-native";
 
@@ -26,18 +29,13 @@ const OrderHistory = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const navigation = useNavigation();
-  const [data, setData] = useState<any[]>([{}]);
-
-  const pressCall=(phone:number)=>{
-    console.log("Pressed item with ID:", phone);
-    const curl='tel://';
-    const call = `${curl}${phone}`;
-    Linking.openURL(call)
-  }
+  const [data, setData] = useState<any[]>([]);
 
 
-  const getOrderHistory = async () => {
 
+  
+
+  const orderHistory = async () => {
     let response = await fetch(
       "https://www.sunshinedeliver.com/api/customer/order/history/",
       {
@@ -47,23 +45,47 @@ const OrderHistory = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          access_token: user?.token,
+          access_token:  user?.token,
         }),
       }
-    );
-    const responseJson = await response.json();
-    setData(responseJson?.order_history);
-    
-
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setData(responseJson?.order_history);
+        console.log("dta==>", responseJson.order_history);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
-
 
   useEffect(() => {
     console.log("dta==>", data);
-    getOrderHistory();
+    orderHistory();
   }, []);
 
- 
+  const pressCall=(phone:number)=>{
+    console.log("Pressed item with ID:", phone);
+    const curl='tel://';
+    const call = `${curl}${phone}`;
+    Linking.openURL(call)
+  }
+
+  const openWhatsAppChat = (phone:number) => {
+    const phoneNumber = phone; // Replace with the desired phone number
+    const url = `whatsapp://send?phone=${phoneNumber}`;
+  
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(url);
+        } else {
+          console.log("WhatsApp is not installed on the device");
+        }
+      })
+      .catch((error) => console.log("An error occurred", error));
+  };
+
   return (
     <>
       <Screen style={tailwind``}>
@@ -80,13 +102,21 @@ const OrderHistory = () => {
           <View>
          
             <Text style={tailwind`text-lg text-gray-400`}>
-             Restaurant : {order?.restaurant?.name}
+             Restaurant {order?.restaurant?.name}
             </Text>
+         
             <TouchableOpacity  onPress={()=> pressCall(order?.restaurant?.phone)}>
-            <Text> Telefone 
+            <Text>{"\n"}Ligar no Restaurante : 
               {order?.restaurant?.phone} 
             </Text>
-            <HeroIconOutline name="chat" size={24} color="black" />
+    
+            </TouchableOpacity>
+
+            <TouchableOpacity  onPress={()=> openWhatsAppChat(order?.restaurant?.phone)}>
+            <Text>{"\n"} WhatsApp o restaurante : 
+              {order?.restaurant?.phone} 
+            </Text>
+    
             </TouchableOpacity>
            
               <View style={tailwind`text-4xl font-bold`}>
@@ -168,11 +198,10 @@ const OrderHistory = () => {
                                 {detais.meal.price} Kz
                               </Text>
                             </Text>
-                          
                             <Text>
-                            {"\n"} Quantidade:{" "}
+                              Quantidade:{" "}
                               <Text style={tailwind`text-gray-800`}>
-                             {detais?.quantity}
+                                {detais?.quantity}
                               </Text>
                             </Text>
                           </View>
