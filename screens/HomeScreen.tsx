@@ -40,9 +40,6 @@ Geocoder.init(googleAPi);
 const HomeScreen = () => {
   const user = useSelector(selectUser);
 
-  //const userPosition = useSelector(setUserLocation);
-
-
   const driverPosition = useSelector(selectDriverLocation);
 
 
@@ -87,7 +84,7 @@ const HomeScreen = () => {
         setUserPhoto(responseJson.customer_detais.avatar);
       })
       .catch((error) => {
-        // console.error(error);
+         console.error(error);
       });
   };
 
@@ -103,6 +100,7 @@ const HomeScreen = () => {
   }, []);
 
   const userLocation = async () => {
+    try{
     if (Platform.OS === "android" && !Device.isDevice) {
       alert(
         "Oops, this will not work on Snack in an Android Emulator. Try it on your device!"
@@ -116,8 +114,6 @@ const HomeScreen = () => {
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    // dispatch(setLocation(location.coords))
-    // console.log(location.coords)
     setCurrentLocation(location.coords);
     dispatch(setUserLocation({ latitude: location.coords.latitude, longitude: location.coords.longitude }));
 
@@ -149,6 +145,10 @@ const HomeScreen = () => {
       .catch((error) => {
         console.log(error);
       });
+
+    } catch (e) {
+      alert(e);
+    }
   };
 
   useEffect(() => {
@@ -198,10 +198,6 @@ const HomeScreen = () => {
       setSearch(text);
     }
   };
-
- 
-
-
 
 
   return (

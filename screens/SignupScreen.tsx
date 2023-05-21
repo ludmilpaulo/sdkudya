@@ -67,7 +67,7 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
         </View>
 
         <Text style={styles.wellcomeTo}>
-          Junte-se ao {"\n"} <Text style={styles.brand}>SD Food</Text>
+          Junte-se ao {"\n"} <Text style={styles.brand}>SD Kudya</Text>
         </Text>
 
         <View style={styles.form}>
@@ -91,8 +91,8 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
               style={styles.input}
               placeholder="Senha"
               secureTextEntry={true}
-              autoCompleteType="off"
-              password={true}
+            //  autoCompleteType="off"
+              //password={true}
               //onChangeText={(password) => updateState({ password })}
               value={password}
               onChangeText={(text) => setPassword(text)}

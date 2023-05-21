@@ -12,7 +12,7 @@ function JoinScreen({ navigation }: { navigation: any }) {
         <View style={styles.image}>
           <Image style={styles.logo} source={require("../assets/logo.png")} />
           <View style={styles.content}>
-            <Text style={styles.title}>SD Food: Entrega de alimentos</Text>
+            <Text style={styles.title}>SD Kudya: Entrega de alimentos</Text>
             <Text style={styles.subTitle}>
               Receba comida à sua porta de milhares de restaurantes locais e
               nacionais incríveis.
