@@ -6,16 +6,19 @@ import HomeScreen from "../screens/HomeScreen";
 import TabCartButton from "../components/TabCartButton";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-///import BrowseScreen from "../screens/BrowseScreen";
+
 import CartScreen from "../screens/CartScreen";
-//import GroceryScreen from "../screens/GroceryScreen";
 import AccountScreen from "../screens/AccountScreen";
 import Delivery from "../screens/Delivery";
 import OrderHistory from "../screens/OrderHistory";
+import { useSelector } from "react-redux";
+import { selectDriverLocation } from "../redux/slices/driverLocationSlice";
 
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
+
+  const driverPosition = useSelector(selectDriverLocation);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -39,6 +42,7 @@ const MainTabNavigator = () => {
           ),
         }}
       />
+      {driverPosition.location ?
       <Tab.Screen
         name="Acompanhar"
         component={Delivery}
@@ -48,6 +52,7 @@ const MainTabNavigator = () => {
           ),
         }}
       />
+      :
       <Tab.Screen
         name="Cart"
         component={CartScreen}
@@ -57,6 +62,7 @@ const MainTabNavigator = () => {
           ),
         })}
       />
+}
       <Tab.Screen
         name="Pedidos"
         component={OrderHistory}

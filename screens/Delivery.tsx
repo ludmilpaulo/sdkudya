@@ -24,12 +24,12 @@ import { selectUserLocation } from "../redux/slices/locationSlice";
 import { selectDriverLocation } from "../redux/slices/driverLocationSlice";
 
 interface LatLng {
-  latitude: any;
-  longitude: any;
+  latitude: number;
+  longitude: number;
 }
 
 const Delivery = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const ref = useRef<MapView | null>(null);
 
@@ -57,7 +57,14 @@ const Delivery = () => {
   const user = useSelector(selectUser);
   const userPosition = useSelector(selectUserLocation);
 
-  const locationObject = JSON.parse(driverPosition.location.replace(/'/g, '"'));
+ // const locationObject = JSON.parse(driverPosition.location.replace(/'/g, '"'));
+
+ //const [ locationObject, setLocationObject ] = useState<LatLng>();
+
+  //else {
+    const locationObject = JSON.parse(driverPosition.location.replace(/'/g, '"'));
+  //  setLocationObject(location)
+ // }
   
   
 
@@ -77,20 +84,15 @@ const Delivery = () => {
   
  
 
-  useEffect(() => {
+
  
     
     
-    pickOrder();
-    const timer = setInterval(() => 
-   
     
-    2000);
-    return () => clearInterval(timer);
-  }, []);
-
+    
   
   useEffect(() => {
+    pickOrder();
     if (locationObject) {
       console.debug(locationObject);
       ref.current?.animateCamera({ center: locationObject, zoom: 15 });
@@ -152,14 +154,18 @@ const Delivery = () => {
           setTime(travelTimeInSeconds.toFixed(2));
         }
       })
-      .catch((error) => console.error("No route information available.", error));
+      .catch((error) => 
+      navigation.navigate("Home")
+      );
   };
 
   useEffect(() => {
-    console.log("my driver", data)
+  
     const timer = setInterval(() => calculateTravelTime(), 2000);
     return () => clearInterval(timer);
   }, []);
+
+
 
   return (
     <Screen style={tailwind`flex-1`}>
@@ -198,8 +204,8 @@ const Delivery = () => {
           <>
             <MapView
               ref={ref}
-              region={{
-                ...locationObject,
+              initialRegion={{
+                ...locationObject
               }}
               style={tailwind`h-full z-10`}
             >
