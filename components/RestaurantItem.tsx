@@ -61,7 +61,9 @@ const RestaurantItemCard = ({ item, onPress }: { item: any; onPress: any }) => {
           color="#fff"
         />
       </TouchableOpacity>
-      <View style={tailwind`flex-row items-center mt-1`}>
+      <View 
+      key={item.id}
+      style={tailwind`flex-row items-center mt-1`}>
         <View style={tailwind`flex-grow`}>
           <Text style={tailwind`font-bold text-lg`} numberOfLines={1}>
             {item.name}
@@ -74,14 +76,14 @@ const RestaurantItemCard = ({ item, onPress }: { item: any; onPress: any }) => {
             />
             <Text style={tailwind`text-xs text-gray-700`}>
               {" "}
-              20-30 • min • {item.price}
+              20-30 • min • 
             </Text>
           </View>
         </View>
         <View
-          style={tailwind`w-8 h-8 justify-center items-center bg-gray-100 rounded-full`}
+          style={tailwind`w-48 h-8 justify-center items-center bg-gray-100 rounded-full`}
         >
-          <Text style={tailwind`text-gray-600 text-xs`}>{item.rating}</Text>
+          <Text style={tailwind`text-gray-600 text-xs`}>{item.phone}</Text>
         </View>
       </View>
     </TouchableOpacity>

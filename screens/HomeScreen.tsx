@@ -100,7 +100,7 @@ const HomeScreen = () => {
   }, []);
 
   const userLocation = async () => {
-    try{
+   
     if (Platform.OS === "android" && !Device.isDevice) {
       alert(
         "Oops, this will not work on Snack in an Android Emulator. Try it on your device!"
@@ -146,9 +146,7 @@ const HomeScreen = () => {
         console.log(error);
       });
 
-    } catch (e) {
-      alert(e);
-    }
+   
   };
 
   useEffect(() => {

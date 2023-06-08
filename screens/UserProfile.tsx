@@ -22,11 +22,6 @@ import { googleAPi } from "../configs/variable";
 
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
-import {
-  launchCamera,
-  launchImageLibrary,
-  Asset,
-} from "react-native-image-picker";
 
 import { useNavigation } from "@react-navigation/native";
 import * as Updates from "expo-updates";
@@ -40,13 +35,14 @@ import * as Device from "expo-device";
 import * as Location from "expo-location";
 import { Camera } from 'expo-camera';
 
-
-type ImageInfo = {
+interface ImageInfo {
   uri: string;
   width: number;
   height: number;
-  type: string;
-};
+  type?: string;
+}
+
+
 
 Geocoder.init(googleAPi);
 
@@ -70,6 +66,8 @@ const UserProfile = () => {
   const navigation = useNavigation<any>();
 
   const [keyboardStatus, setKeyboardStatus] = useState(undefined);
+
+  const [image, setImage] = useState<ImageInfo | undefined>();
 
   const userLocation = async () => {
     if (Platform.OS === "android" && !Device.isDevice) {
@@ -104,10 +102,10 @@ const UserProfile = () => {
     userLocation();
    
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-      setKeyboardStatus("Keyboard Shown");
+      return setKeyboardStatus("Keyboard Shown");
     });
     const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardStatus("Keyboard Hidden");
+      return setKeyboardStatus("Keyboard Hidden");
     });
 
     return () => {
@@ -116,23 +114,34 @@ const UserProfile = () => {
     };
   }, []);
 
-  const [imageInfo, setImageInfo] = useState<ImageInfo | undefined>();
+ 
 
   const handleTakePhoto = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-   //let { status } = await Camera.requestPermissionsAsync();
+    //const { status } = await Permissions.askAsync(Permissions.CAMERA);
+   
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
       alert("Permission to access camera denied");
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    if (!result.cancelled) {
-      setImageInfo(result);
+  
+    if (result && result.assets && result.assets.length > 0) {
+      // Use the assets array to access the selected image(s)
+      const selectedAsset = result.assets[0];
+      setImage(selectedAsset);
+      console.log(selectedAsset.uri);
+      console.log(selectedAsset.width);
+      console.log(selectedAsset.height);
+    
     }
+
+
   };
 
   const handleSelectPhoto = async () => {
@@ -142,37 +151,37 @@ const UserProfile = () => {
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
-    if (!result.cancelled) {
-      setImageInfo(result);
+
+    if (result && result.assets && result.assets.length > 0) {
+      const selectedAsset = result.assets[0];
+      setImage(selectedAsset);
     }
   };
 
   const userUpdate = async () => {
-    
-  
-
     // ImagePicker saves the taken photo to disk and returns a local URI to it
-    if (!imageInfo) {
+    if (!image) {
       alert("Please select an image first");
       return;
     }
-    const { uri, type } = imageInfo;
+    const { uri, type } = image;
 
     // Upload the image using the fetch and FormData APIs
     let formData = new FormData();
-    // Assume "photo" is the name of the form field the server expects
+   
     formData.append("avatar", { uri, type, name: "image.jpg" });
+  
     formData.append("access_token", user?.token);
     formData.append("address", address);
     formData.append("first_name", first_name);
     formData.append("last_name", last_name);
     formData.append("phone", phone);
-
+   
     console.log("shool ==>", formData);
 
    // try {
@@ -203,7 +212,7 @@ const UserProfile = () => {
   //  } catch (e) {
     //  console.log("alila", e);
      // alert("O usuário não existe, inscreva-se ou tente fazer login novamente");
-    
+
       Updates.reloadAsync();
   //  }
   };
@@ -214,9 +223,9 @@ const UserProfile = () => {
         <View style={styles.wrapper}>
           <View style={tailwind`justify-center items-center`}>
             <View style={tailwind`rounded-full overflow-hidden w-48 h-48 mt-4`}>
-              {imageInfo && (
+              {image && (
                 <Image
-                  source={{ uri: imageInfo.uri }}
+                  source={{ uri: image.uri }}
                   style={tailwind`w-48 h-48`}
                 />
               )}
