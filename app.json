@@ -22,7 +22,7 @@
     },
     "android": {
        "config": {
-          "googleMapsApiKey": "AIzaSyCmEG4tqSa6MAAihUU9i8P5VLYJt9X1OqM",
+          "googleMapsApiKey": "AIzaSyCmEG4tqSa6MAAihUU9i8P5VLYJt9X1OqM"
         },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -31,6 +31,11 @@
       "versionCode":2,
       "package": "com.ludmil.sdkudya"
     },
+    "config": {
+      "googleMaps": {
+        "apiKey": "AIzaSyCmEG4tqSa6MAAihUU9i8P5VLYJt9X1OqM"
+      }
+      },
     "web": {
       "favicon": "./assets/favicon.png"
     },
